@@ -1,0 +1,21 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    env_file: .env
+    depends_on:
+      valkey:
+        condition: service_started
+        required: false
+
+  # Valkey (Redis fork, BSD) — optional, for parity with Upstash prod.
+  # Default is SQLite (DATABASE_URL=sqlite:./data/org.db) with no extra service.
+  # To use Valkey: uncomment this service and set REDIS_URL=redis://:pass@valkey:6379 in .env
+  valkey:
+    image: valkey/valkey:8-alpine
+    command: valkey-server --appendonly yes --save 60 1 --requirepass ${VALKEY_PASSWORD:-}
+    volumes:
+      - ./valkey-data:/data

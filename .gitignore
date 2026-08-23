@@ -1,0 +1,11 @@
+node_modules/
+.env
+play-integrity/
+dist/
+.vercel/
+context_adroid/
+/context_android/
+data/
+valkey-data/
+*.db
+*.sqlite

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "bunVersion": "1.x",
+  "regions": ["gru1"],
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 60
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/v1/cron/reconcile",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}

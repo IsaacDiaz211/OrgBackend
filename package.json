@@ -1,0 +1,27 @@
+{
+  "name": "leyendolo-org-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Leyéndolo backend para organizaciones — portable (Upstash / Valkey / SQLite / Memory)",
+  "scripts": {
+    "dev": "bun --watch src/server.ts",
+    "start": "bun run src/server.ts",
+    "typecheck": "bunx tsc --noEmit",
+    "check": "bun run typecheck",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "latest",
+    "@upstash/redis": "1.36.2",
+    "elysia": "latest",
+    "ioredis": "^5.3.2",
+    "jose": "latest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/ioredis": "^5.0.0",
+    "typescript": "latest"
+  }
+}
