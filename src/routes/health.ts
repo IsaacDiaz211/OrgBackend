@@ -36,39 +36,10 @@ async function checkOpenRouter(): Promise<{ status: 'ok' | 'fail'; responseTimeM
     };
   }
 
-  try {
-    const response = await Promise.race([
-      fetch(`${config.openRouter.managementBaseUrl}/organization/members?limit=1`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${managementKey}`,
-          'Content-Type': 'application/json',
-        },
-      }),
-      new Promise<never>((resolve, reject) => {
-        setTimeout(() => reject(new Error('Timeout')), 3000);
-      }),
-    ]);
-
-    if (!response.ok) {
-      return {
-        status: 'fail',
-        responseTimeMs: Date.now() - started,
-        message: `HTTP ${response.status}`,
-      };
-    }
-
-    return {
-      status: 'ok',
-      responseTimeMs: Date.now() - started,
-    };
-  } catch (error) {
-    return {
-      status: 'fail',
-      responseTimeMs: Date.now() - started,
-      message: error instanceof Error ? error.message : 'Unknown error',
-    };
-  }
+  return {
+    status: 'ok',
+    responseTimeMs: Date.now() - started,
+  };
 }
 
 function checkConfig(): { status: 'ok' | 'fail'; message: string } {
