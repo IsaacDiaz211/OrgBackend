@@ -6,5 +6,5 @@ COPY src ./src
 COPY api ./api
 ENV PORT=3000
 EXPOSE 3000
-HEALTHCHECK CMD bun --bun fetch http://localhost:3000/api/v1/health || exit 1
+HEALTHCHECK CMD bun --bun -e "fetch('http://localhost:3000/api/v1/health').then(r => { if (!r.ok) process.exit(1) })"
 CMD ["bun", "run", "src/server.ts"]
