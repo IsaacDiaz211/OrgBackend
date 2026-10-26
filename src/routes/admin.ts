@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import { config } from '../config';
-import { brokerStore } from '../container';
+import { brokerStore, openRouterClient } from '../container';
 import { requireAdmin } from '../plugins/auth';
 import { applyRateLimit } from '../plugins/rateLimit';
 import { InviteCreateSchema, MembershipRefillSchema, MembershipRevokeSchema } from '../schemas';
@@ -236,6 +236,16 @@ export const adminRoutes = new Elysia()
       const updated = await brokerStore.updateMembership(hash, { status: 'revoked' });
       const lease = await brokerStore.getLeaseByInstall(hash);
       if (lease && lease.status === 'active') {
+        // Best-effort upstream delete: the leased key must not stay valid.
+        if (openRouterClient.isConfigured()) {
+          try {
+            await openRouterClient.deleteKey(lease.upstreamHash);
+          } catch (error) {
+            console.log(
+              `[org] membership_revoke_upstream_failed install=${hash.slice(0, 10)} ${error instanceof Error ? `${error.name}: ${error.message}` : String(error)}`,
+            );
+          }
+        }
         await brokerStore.markLeaseRevoked(lease.keyHash);
       }
       console.log(`[org] membership_revoked install=${hash.slice(0, 10)} reason=${body.reason ?? ''} leaseRevoked=${Boolean(lease && lease.status === 'active')}`);
