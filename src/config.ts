@@ -35,6 +35,21 @@ const readString = (name: string, fallback = ''): string => {
   return process.env[name]?.trim() ?? fallback;
 };
 
+const readModelName = (name: string, fallback: string): string => {
+  const value = process.env[name]?.trim();
+  return value || fallback;
+};
+
+// Hardcoded model fallbacks mirror the app defaults
+// (ravenToPandas/services/OpenRouterTranslation.ts:84-87 and
+// ravenToPandas/services/OpenRouterGrammarAssist.ts:28-31).
+// Model names are not secrets, so they are safe to expose via GET /api/v1/models.
+export const MODEL_FALLBACKS = {
+  primary: 'inception/mercury-2.5',
+  segmentation: 'inclusionai/ling-3.0-flash-fin',
+  assist: 'inception/mercury-2',
+} as const;
+
 const parseLimitReset = (raw: string): LimitReset => {
   const normalized = raw.trim().toLowerCase();
   if (!normalized || normalized === 'null' || normalized === 'none') {
@@ -159,6 +174,19 @@ export const config = {
     keyRotateAfterSeconds: readNumber('KEY_ROTATE_AFTER_SECONDS', 21600),
     keyHardExpiresSeconds: readNumber('KEY_HARD_EXPIRES_SECONDS', 86400),
     extraCreatePayload: parseObject(readString('OPENROUTER_EXTRA_CREATE_PAYLOAD', '')),
+  },
+
+  models: {
+    // Server-side mirrors of the app's EXPO_PUBLIC_OPENROUTER_MODEL* vars.
+    primary: readModelName('OPENROUTER_MODEL', MODEL_FALLBACKS.primary),
+    primary2: readModelName('OPENROUTER_MODEL_2', MODEL_FALLBACKS.primary),
+    primary3: readModelName('OPENROUTER_MODEL_3', MODEL_FALLBACKS.primary),
+    segmentation: readModelName('OPENROUTER_MODEL_SEG', MODEL_FALLBACKS.segmentation),
+    // Mirrors OpenRouterGrammarAssist.ts:28-31 (ASSIST ?? primary model).
+    assist: readModelName(
+      'OPENROUTER_MODEL_ASSIST',
+      readModelName('OPENROUTER_MODEL', MODEL_FALLBACKS.assist),
+    ),
   },
 
   rateLimit: {

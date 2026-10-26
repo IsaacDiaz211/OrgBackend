@@ -25,6 +25,10 @@ Base prefix is configurable with `API_PREFIX` (default `/api/v1`).
 
 - `GET /api/v1/health`
   - liveness check
+- `GET /api/v1/models` (public, no auth — model names are not secrets)
+  - output: `{ primaryChain: string[3], segmentationChain: string[1], assistModel: string, defaults: {...} }`
+  - source: server env `OPENROUTER_MODEL{,_2,_3,_SEG,_ASSIST}` with hardcoded fallback to the app defaults
+  - identical contract in EdgeBackend and OrgBackend
 - `POST /api/v1/challenge`
   - input: `{ installId, platform, appVersion? }`
   - output: `{ challengeId, nonce, expiresInSec }`

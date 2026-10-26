@@ -2,6 +2,7 @@ import { Elysia } from 'elysia';
 import { config } from './config';
 import { HttpError } from './utils/errors';
 import { healthRoutes } from './routes/health';
+import { modelsRoutes } from './routes/models';
 import { challengeRoutes } from './routes/challenge';
 import { sessionRoutes } from './routes/session';
 import { openrouterRoutes } from './routes/openrouter';
@@ -35,6 +36,7 @@ export const app = new Elysia()
   .group(config.apiPrefix, (api) =>
     api
       .use(healthRoutes)
+      .use(modelsRoutes)
       .use(challengeRoutes)
       .use(sessionRoutes)
       .use(openrouterRoutes)
